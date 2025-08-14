@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,9 +44,12 @@ INSTALLED_APPS = [
 
     # thrid party app
     'rest_framework',
+    'drf_spectacular',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -126,3 +130,43 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK = {
+    # YOUR SETTINGS
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Your Project API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
+
+
+# settings.py
+
+# ==============================================================================
+# CORS (Cross-Origin Resource Sharing) Settings
+# ==============================================================================
+
+# لیستی از دامنه‌هایی که اجازه دسترسی دارند
+# ❗ آدرس فرانت‌اند Vue خود را اینجا وارد کنید
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+# اگر API شما از کوکی یا احراز هویت session استفاده می‌کند، این گزینه باید True باشد
+CORS_ALLOW_CREDENTIALS = True
+
+
+
+
+# آدرسی که فایل‌های آپلود شده در آن قابل دسترسی هستند
+MEDIA_URL = '/media/'
+
+# مسیری در هارد دیسک که فایل‌های آپلود شده در آن ذخیره می‌شوند
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

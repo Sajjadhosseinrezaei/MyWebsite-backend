@@ -47,6 +47,12 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
         if featured:
             queryset = queryset.filter(is_featured=True)
         return queryset
+    
+    def get_serializer_context(self):
+        """
+        این متد context را به سریالایزر اضافه می‌کند.
+        """
+        return {'request': self.request}
 
 # برای ProjectImage: تصاویر وابسته به پروژه، می‌توان ViewSet جداگانه داشت اما بهتر است nested باشد
 # اما برای سادگی، ReadOnlyModelViewSet با فیلتر بر اساس project

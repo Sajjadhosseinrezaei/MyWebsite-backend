@@ -28,11 +28,39 @@ class ProjectImageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProjectSerializer(serializers.ModelSerializer):
+    # این موارد به درستی از قبل تعریف شده بودند
     category = ProjectCategorySerializer(read_only=True)
     technologies = TechnologySerializer(many=True, read_only=True)
-    images = ProjectImageSerializer(many=True, read_only=True, source='images')  # برای نمایش تصاویر گالری
+    
+    # اینجا از سریالایزر اصلاح شده بالا استفاده می‌کنیم
+    images = ProjectImageSerializer(many=True, read_only=True)
+
+    # فیلد جدید برای آدرس کامل تصویر اصلی پروژه
+    featured_image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
-        fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at')  # اگر BaseModel این فیلدها را داشته باشد
+        # به جای '__all__' فیلدها را دستی لیست می‌کنیم
+        fields = [
+            'id',
+            'title',
+            'description',
+            'short_description',
+            'featured_image_url', # <-- فیلد جدید جایگزین شد
+            'github_url',
+            'demo_url',
+            'status',
+            'is_featured',
+            'order',
+            'category',
+            'technologies',
+            'images',
+            'created_at',
+            'updated_at',
+        ]
+    
+    def get_featured_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.featured_image and hasattr(obj.featured_image, 'url'):
+            return request.build_absolute_uri(obj.featured_image.url)
+        return None

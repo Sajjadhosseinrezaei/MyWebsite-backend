@@ -24,10 +24,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-2kw!yxm829o8a$-45m%q#hk&@fm_a4spef3yjf*ffk!e)*r_dx'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "0") == "1"
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS") else []
 
-ALLOWED_HOSTS = []
+if DEBUG:
+    # وقتی پروژه روی لوکال اجرا میشه (npm run dev برای Vue)
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+else:
+    # وقتی روی سرور (production) هستی
+    CORS_ALLOWED_ORIGINS = [
+        "https://sajjadhossein.site",
+        "https://www.sajjadhossein.site",
+    ]
 
+# اگر API از کوکی/session یا JWT با SameSite=None استفاده می‌کنه
+# لازمه که مرورگر اجازه بده کوکی بین دامنه‌ها رد و بدل بشه
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -144,24 +160,6 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
 }
-
-
-# settings.py
-
-# ==============================================================================
-# CORS (Cross-Origin Resource Sharing) Settings
-# ==============================================================================
-
-# لیستی از دامنه‌هایی که اجازه دسترسی دارند
-# ❗ آدرس فرانت‌اند Vue خود را اینجا وارد کنید
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-
-# اگر API شما از کوکی یا احراز هویت session استفاده می‌کند، این گزینه باید True باشد
-CORS_ALLOW_CREDENTIALS = True
-
 
 
 

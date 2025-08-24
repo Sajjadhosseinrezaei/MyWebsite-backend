@@ -6,6 +6,9 @@ from .serializers import (
     ProjectCategorySerializer, ProjectSerializer, ProjectImageSerializer
 )
 
+
+
+
 # برای Profile: تک رکورد، پس RetrieveAPIView استفاده می‌کنیم (فرض بر single instance)
 class ProfileView(generics.RetrieveAPIView):
     queryset = Profile.objects.all()

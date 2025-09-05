@@ -107,14 +107,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # }
 
 import os
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'postgres'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+        'NAME': os.environ.get('POSTGRES_DB', 'mysite'),
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 
@@ -153,6 +155,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -179,4 +183,4 @@ SPECTACULAR_SETTINGS = {
 MEDIA_URL = '/media/'
 
 # مسیری در هارد دیسک که فایل‌های آپلود شده در آن ذخیره می‌شوند
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')

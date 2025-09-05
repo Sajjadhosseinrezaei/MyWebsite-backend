@@ -5,9 +5,6 @@ __pycache__/
 *.pyd
 *.sqlite3
 
-# فایل‌های محیط توسعه
-*.env
-
 # پوشه‌های مربوط به Git
 .git
 .gitignore
@@ -23,7 +20,6 @@ tmp/
 
 # پوشه‌های خروجی و build
 build/
-dist/
 *.egg-info/
 
 # فایل‌های سیستم عامل

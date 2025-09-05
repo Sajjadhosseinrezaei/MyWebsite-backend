@@ -91,7 +91,7 @@ class Command(BaseCommand):
 
         # --------- ایجاد پروژه‌ها (Projects) + تصاویر وب ----------
         # تعداد پروژه‌ها را در صورت نیاز تغییر دهید
-        num_projects = 20
+        num_projects = 5
 
         created_projects = 0
         for i in range(num_projects):

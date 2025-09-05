@@ -1,0 +1,38 @@
+# فایل‌ها و پوشه‌های پایتون
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# فایل‌های محیط توسعه
+*.env
+
+# پوشه‌های مربوط به Git
+.git
+.gitignore
+
+# لاگ‌ها
+*.log
+
+# پوشه‌های موقت و کش
+tmp/
+*.tmp
+*.swp
+*.swo
+
+# پوشه‌های خروجی و build
+build/
+dist/
+*.egg-info/
+
+# فایل‌های سیستم عامل
+.DS_Store
+Thumbs.db
+
+# پوشه‌های مربوط به IDE
+.vscode/
+.idea/
+
+# رسانه‌ها (در صورت ذخیره محلی)
+media/

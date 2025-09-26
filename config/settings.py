@@ -184,3 +184,17 @@ MEDIA_URL = '/media/'
 
 # مسیری در هارد دیسک که فایل‌های آپلود شده در آن ذخیره می‌شوند
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+
+
+
+
+from decouple import config
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('MAIL_HOST')
+EMAIL_PORT = config('MAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('MAIL_USER')
+EMAIL_HOST_PASSWORD = config('MAIL_PASSWORD')
+EMAIL_USE_TLS = False # Disable STARTTLS 
+EMAIL_USE_SSL = True  # Force TLS
+MAIL_FROM = f"{config('MAIL_FROM_ADDRESS')}>"

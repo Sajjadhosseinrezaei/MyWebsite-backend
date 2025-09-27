@@ -64,3 +64,13 @@ class ProjectSerializer(serializers.ModelSerializer):
         if obj.featured_image and hasattr(obj.featured_image, 'url'):
             return request.build_absolute_uri(obj.featured_image.url)
         return None
+
+
+
+
+class ContactSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=200)
+    email = serializers.EmailField()
+    subject = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    message = serializers.CharField()
+    turnstile_token = serializers.CharField()  # از فرانت ارسال می‌شود

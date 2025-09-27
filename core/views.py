@@ -3,9 +3,18 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly  # اختیار
 from .models import Profile, Skill, Technology, ProjectCategory, Project, ProjectImage
 from .serializers import (
     ProfileSerializer, SkillSerializer, TechnologySerializer,
-    ProjectCategorySerializer, ProjectSerializer, ProjectImageSerializer
+    ProjectCategorySerializer, ProjectSerializer, ProjectImageSerializer,
+    ContactSerializer
 )
-
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
+from django.core.mail import send_mail
+from django.conf import settings
+import requests
+from email.utils import parseaddr
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 
 
@@ -70,3 +79,75 @@ class ProjectImageViewSet(viewsets.ReadOnlyModelViewSet):
         if project_id:
             queryset = queryset.filter(project_id=project_id)
         return queryset
+    
+
+class ContactView(APIView):
+
+    def post(self, request):
+        serializer = ContactSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({'success': False, 'message': 'اطلاعات نامعتبر', 'errors': serializer.errors},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        token = data.get('turnstile_token')
+
+        # اعتبارسنجی توکن Turnstile
+        secret = getattr(settings, 'TURNSTILE_SECRET_KEY', None)
+        if not secret:
+            return Response({'success': False, 'message': 'سرور پیکربندی نشده'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        verify_url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
+        payload = {'secret': secret, 'response': token}
+
+        try:
+            resp = requests.post(verify_url, data=payload, timeout=10)
+            resp.raise_for_status()
+            result = resp.json()
+        except requests.RequestException as e:
+            return Response({'success': False, 'message': 'خطا در بررسی کپچا: ' + str(e)},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        if not result.get('success'):
+            return Response({'success': False, 'message': 'اعتبارسنجی کپچا ناموفق بود.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # ارسال ایمیل
+        subject = data.get('subject') or f'پیام از {data.get("name")}'
+        body = f"""
+نام: {data.get('name')}
+ایمیل: {data.get('email')}
+موضوع: {data.get('subject')}
+
+پیام:
+{data.get('message')}
+"""
+
+        # parse و validate ایمیل‌ها
+        raw_from = getattr(settings, 'MAIL_FROM', '')
+        raw_to = getattr(settings, 'CONTACT_RECIPIENT_EMAIL', '')
+
+        _, from_email = parseaddr(raw_from)
+        _, to_email = parseaddr(raw_to)
+
+        # validate
+        try:
+            validate_email(from_email)
+            validate_email(to_email)
+        except ValidationError:
+            return Response({'success': False, 'message': 'آدرس ایمیل پیکربندی شده نامعتبر است.'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        try:
+            send_mail(
+                subject=subject,
+                message=body,
+                from_email=from_email,
+                recipient_list=[to_email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            return Response({'success': False, 'message': 'خطا در ارسال ایمیل: ' + str(e)},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response({'success': True, 'message': 'پیام ارسال شد.'})

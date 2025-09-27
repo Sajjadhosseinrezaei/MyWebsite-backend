@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     ProfileView, SkillViewSet, TechnologyViewSet,
-    ProjectCategoryViewSet, ProjectViewSet, ProjectImageViewSet
+    ProjectCategoryViewSet, ProjectViewSet, ProjectImageViewSet, ContactView
 )
 
 # استفاده از DefaultRouter برای ViewSetها (که لیست و جزئیات را مدیریت می‌کند)
@@ -16,5 +16,6 @@ router.register(r'project-images', ProjectImageViewSet, basename='projectimage')
 # URLهای دستی برای ویوهای غیر ViewSet مثل Profile
 urlpatterns = [
     path('', include(router.urls)),  # همه URLهای router
-    path('profile/', ProfileView.as_view(), name='profile'),  
+    path('profile/', ProfileView.as_view(), name='profile'), 
+    path('contact/', ContactView.as_view(), name='contact'),
 ]

@@ -4,6 +4,7 @@ from .views import (
     ProfileView, SkillViewSet, TechnologyViewSet,
     ProjectCategoryViewSet, ProjectViewSet, ProjectImageViewSet, ContactView
 )
+from .health import health_check
 
 # استفاده از DefaultRouter برای ViewSetها (که لیست و جزئیات را مدیریت می‌کند)
 router = DefaultRouter()
@@ -18,4 +19,5 @@ urlpatterns = [
     path('', include(router.urls)),  # همه URLهای router
     path('profile/', ProfileView.as_view(), name='profile'), 
     path('contact/', ContactView.as_view(), name='contact'),
+    path('health/', health_check, name='health-check'),
 ]

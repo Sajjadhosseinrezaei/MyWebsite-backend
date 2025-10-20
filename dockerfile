@@ -24,9 +24,7 @@ FROM python:3.12.3-slim
 
 
 # Create app directories
-RUN mkdir -p /app/staticfiles \
-    && mkdir -p /app/mediafiles \
-    && mkdir -p /app/db
+RUN mkdir -p /app/staticfiles
 
 # Set work directory
 WORKDIR /app

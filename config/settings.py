@@ -34,6 +34,8 @@ if DEBUG:
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
     ]
 else:
     # وقتی روی سرور (production) هستی
@@ -63,6 +65,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'corsheaders',
+    'cloudinary_storage',
+    'cloudinary',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -99,10 +104,22 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Add these at the top of your settings.py
+from urllib.parse import urlparse, parse_qsl
+
+
+# Replace the DATABASES section of your settings.py with this
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path.replace('/', ''),
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': 5432,
+        'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
     }
 }
 
@@ -165,14 +182,6 @@ SPECTACULAR_SETTINGS = {
 
 
 
-# آدرسی که فایل‌های آپلود شده در آن قابل دسترسی هستند
-MEDIA_URL = '/media/'
-
-# مسیری در هارد دیسک که فایل‌های آپلود شده در آن ذخیره می‌شوند
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
-
-
-
 
 from decouple import config
 
@@ -188,3 +197,36 @@ MAIL_FROM = config('MAIL_FROM_ADDRESS')
 
 TURNSTILE_SECRET_KEY = config('TURNSTILE_SECRET_KEY')
 CONTACT_RECIPIENT_EMAIL = 'sajjadhosseinrezaei@yahoo.com'
+
+
+
+# # Cloudinary Settings (جایگزین AWS/Liara)
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+#     'API_KEY': config('CLOUDINARY_API_KEY'),
+#     'API_SECRET': config('CLOUDINARY_API_SECRET'),
+#     'AUTO_SET_FULL_URL': True,  # URL کامل (با https://res.cloudinary.com/) تولید کنه
+#     'OVERWRITE': True,  # اجازه overwrite فایل‌ها
+#     'TIMEOUT': 120,  # timeout آپلود
+# }
+
+
+# AWS S3 Settings for Liara
+AWS_ACCESS_KEY_ID = os.getenv('LIARA_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('LIARA_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = os.getenv('LIARA_ENDPOINT_URL')
+
+# MEDIA_URL (برای دسترسی به فایل‌ها)
+MEDIA_URL = 'media/'
+
+
+
+STORAGES = {
+    "default": {
+        "BACKEND": 'storages.backends.s3boto3.S3Boto3Storage',  # media در Cloudinary
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # static محلی
+    },
+}

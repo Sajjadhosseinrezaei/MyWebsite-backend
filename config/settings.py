@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(r"/home/sajjadhossein/Desktop/djangoprojects/MySite/.env")
+load_dotenv(BASE_DIR / ".env")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -67,7 +67,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'cloudinary_storage',
     'cloudinary',
-    'storages'
+    'storages',
+    'whitenoise',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +80,30 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+if DEBUG:
+    # Local storage for development
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.core.files.storage.StaticFilesStorage",
+        },
+    }
+else:
+    # Production: S3 for media/default, WhiteNoise for static
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",  # media در Cloudinary (if configured as S3-compatible)
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+
 
 ROOT_URLCONF = 'config.urls'
 
@@ -221,12 +245,3 @@ AWS_S3_ENDPOINT_URL = os.getenv('LIARA_ENDPOINT_URL')
 MEDIA_URL = 'media/'
 
 
-
-STORAGES = {
-    "default": {
-        "BACKEND": 'storages.backends.s3boto3.S3Boto3Storage',  # media در Cloudinary
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # static محلی
-    },
-}

@@ -22,7 +22,6 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.t
 # 2. Final stage
 FROM python:3.12.3-slim
 
-
 # Create app directories
 RUN mkdir -p /app/staticfiles
 
@@ -46,8 +45,7 @@ RUN pip install --no-cache-dir /wheels/*
 COPY . .
 
 # Collect static files
-RUN python manage.py collectstatic --no-input
-
+RUN python manage.py collectstatic --noinput
 
 # Expose port
 EXPOSE 8000

@@ -25,25 +25,28 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = 'django-insecure-2kw!yxm829o8a$-45m%q#hk&@fm_a4spef3yjf*ffk!e)*r_dx'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+import os
+
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "0") == "1"
+
+# Load ALLOWED_HOSTS from .env
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+
+# Load CSRF_TRUSTED_ORIGINS from .env
 CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS") else []
 
+# Load CORS_ALLOWED_ORIGINS from .env
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",") if os.environ.get("CORS_ALLOWED_ORIGINS") else []
+
+# Add local origins for development if DEBUG is True
 if DEBUG:
-    # وقتی پروژه روی لوکال اجرا میشه (npm run dev برای Vue)
-    CORS_ALLOWED_ORIGINS = [
+    CORS_ALLOWED_ORIGINS.extend([
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "http://localhost:3000",
-    ]
-else:
-    # وقتی روی سرور (production) هستی
-    CORS_ALLOWED_ORIGINS = [
-        "https://sajjadhossein.site",
-        "https://www.sajjadhossein.site",
-        "http://localhost:3000",
-    ]
+    ])
 
 # اگر API از کوکی/session یا JWT با SameSite=None استفاده می‌کنه
 # لازمه که مرورگر اجازه بده کوکی بین دامنه‌ها رد و بدل بشه

@@ -42,6 +42,7 @@ else:
     CORS_ALLOWED_ORIGINS = [
         "https://sajjadhossein.site",
         "https://www.sajjadhossein.site",
+        "http://localhost:3000",
     ]
 
 # اگر API از کوکی/session یا JWT با SameSite=None استفاده می‌کنه

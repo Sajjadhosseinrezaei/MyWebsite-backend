@@ -192,7 +192,7 @@ MIT © Sajjad Rezaei
 
 * Email: [sajjadhosseinrezaei@yahoo.com](mailto:sajjadhosseinrezaei@yahoo.com)
 * LinkedIn: [https://linkedin.com/in/sajjadhosseinrezaei](https://linkedin.com/in/sajjadhosseinrezaei)
-* Website: [https://sajjadhosseinrezaei.ir](https://sajjadhosseinrezaei.ir)
+* Website: [https://sajjadhosseinrezaei.ir](https://sajjadhossein.site)
 
 ---
 
